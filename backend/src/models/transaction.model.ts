@@ -1,7 +1,15 @@
-import mongoose, { mongo } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 
-const Schema = mongoose.Schema;
-const transactionSchema = new Schema(
+export interface ITransaction {
+  amount: number;
+  note: string | undefined;
+  label: string | undefined;
+  date: Date;
+  categoryId: Types.ObjectId;
+  userId: Types.ObjectId;
+}
+
+const transactionSchema = new Schema<ITransaction>(
   {
     amount: {
       type: Number,
@@ -22,12 +30,12 @@ const transactionSchema = new Schema(
     },
 
     categoryId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Category",
       required: true,
     },
     userId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
@@ -35,4 +43,4 @@ const transactionSchema = new Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("Transaction", transactionSchema);
+export default model<ITransaction>("Transaction", transactionSchema);

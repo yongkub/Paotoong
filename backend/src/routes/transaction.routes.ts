@@ -1,7 +1,6 @@
-import express from "express";
-const router = express.Router();
+import { Router } from "express";
+import { createTxn } from "../controllers/transaction.controller";
+const router = Router();
 
-router.get("/transactions", (req, res) => {
-  res.json("haha");
-});
+router.post("/", createTxn);
 export default router;
