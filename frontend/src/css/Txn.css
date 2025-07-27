@@ -1,0 +1,21 @@
+.sm-txt{
+    font-size: 12px;
+}
+.label{
+    border-radius: 50rem;
+    background:  darkblue;
+    width: max-content;
+    padding: 2px 5px;
+}
+.txncard{
+    padding: 20px 30px;
+}
+.txndet{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+}
+.txncard:hover{
+    background-color: #161719;
+}
