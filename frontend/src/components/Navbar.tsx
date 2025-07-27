@@ -1,10 +1,9 @@
-import useAuthContext from "../hooks/useAuthContext";
 import { Link } from "react-router";
+import useLogout from "../hooks/useLogout";
 const Navbar = () => {
-  const { dispatch } = useAuthContext();
+  const { logout } = useLogout();
   const handleLogout = () => {
-    dispatch({ type: "LOGOUT" });
-    localStorage.removeItem("user");
+    logout();
   };
   return (
     <div className="py-2 px-3 mb-3 d-flex align-items-center bg-secondary-subtle">

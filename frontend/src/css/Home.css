@@ -1,3 +1,8 @@
 .w-max-con{
     width: max-content !important;
 }
+#add-txn{
+    font-size: 30px;
+    padding: 0 7.5px;
+    cursor: pointer;
+}

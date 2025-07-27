@@ -1,11 +1,37 @@
-.sm-txt{
-    font-size: 12px;
+.sm-txt, #x{
+    font-size: 12px !important;
 }
 .label{
     border-radius: 50rem;
     background:  darkblue;
     width: max-content;
     padding: 2px 5px;
+}
+.txn-bd{
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+.txn-modal{
+    background-color: rgb(49, 49, 49);
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+}
+.txn-modal i{
+    font-size: 15px;
+    margin-right: 10px;
+}
+.txn-modal .wrap{
+    margin: 10px 0;
+}   
+.txn-modal input{
+    width: calc(100% - 60px)
 }
 .txncard{
     padding: 20px 30px;
@@ -18,4 +44,36 @@
 }
 .txncard:hover{
     background-color: #161719;
+}
+.cat-select{
+    position: absolute;
+    left: 0;
+    top: calc(100%);
+    background-color: black;
+    width: 100%;
+    border-radius: 16px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 50vh;
+    overflow-y: auto;
+    z-index: 10;
+}
+.cat-item{
+    padding: 2px 5px;
+    border-radius: 8px;
+    font-size: 12px;
+}
+.cat-item:hover{
+    background-color: rgb(67, 67, 67);
+}
+.cat-item img, .cat-icon{
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+.act-btn{
+    width: 40%;
+    font-size: 14px !important;
 }

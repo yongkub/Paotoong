@@ -15,8 +15,13 @@ const TxnCard = (props: TxnCardProps) => {
   return (
     <>
       <div className="d-flex gap-2 w-100 align-items-center txncard">
-        <div className="btn btn-success">
-          <i className="bi bi-fork-knife"></i>
+        <div className="btn">
+          <img
+            src={`src/assets/category/${props.category
+              .toLowerCase()
+              .split("&")[0]
+              .trim()}.svg`}
+          />
         </div>
         <div className="txndet">
           <div>{props.category}</div>
@@ -30,7 +35,7 @@ const TxnCard = (props: TxnCardProps) => {
         </div>
         <div className="ms-auto">
           <span className={props.isExpense ? "text-danger" : "text-success"}>
-            {props.isExpense ? "-" : "+"} THB {props.price}
+            {props.isExpense ? "-" : "+"} THB {props.amount}
           </span>
           <i
             className="bi bi-pencil-square ps-2 text-warning"

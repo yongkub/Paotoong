@@ -2,8 +2,8 @@ import { Schema, model, Types } from "mongoose";
 
 export interface ITransaction {
   amount: number;
-  note: string | undefined;
-  label: string | undefined;
+  note?: string;
+  label?: string;
   date: Date;
   isExpense: boolean;
   categoryId: Types.ObjectId;

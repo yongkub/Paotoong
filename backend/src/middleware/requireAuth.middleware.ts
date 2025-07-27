@@ -7,7 +7,7 @@ interface TokenPayload extends JwtPayload {
   _id: string;
 }
 export interface AuthRequest extends Request {
-  user: Types.ObjectId | null;
+  userId: Types.ObjectId | undefined;
 }
 
 const requireAuth = async (req: Request, res: Response, next: NextFunction) => {
@@ -22,7 +22,8 @@ const requireAuth = async (req: Request, res: Response, next: NextFunction) => {
       process.env.SECRET as string
     ) as TokenPayload;
     const authReq = req as AuthRequest; // authReq and req are the same object
-    authReq.user = await User.findById(_id).select("_id");
+    const userDoc = await User.findById(_id).select("_id");
+    authReq.userId = userDoc?._id;
     next();
   } catch (err) {
     console.log(err);
