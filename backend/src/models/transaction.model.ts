@@ -5,6 +5,7 @@ export interface ITransaction {
   note: string | undefined;
   label: string | undefined;
   date: Date;
+  isExpense: boolean;
   categoryId: Types.ObjectId;
   userId: Types.ObjectId;
 }
@@ -26,6 +27,10 @@ const transactionSchema = new Schema<ITransaction>(
     },
     date: {
       type: Date,
+      required: true,
+    },
+    isExpense: {
+      type: Boolean,
       required: true,
     },
 
