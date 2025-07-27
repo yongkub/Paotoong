@@ -8,7 +8,7 @@ export interface IUser {
 }
 
 interface UserModel extends Model<IUser> {
-  signup(username: string, password: string): Promise<IUser>;
+  signup(username: string, password: string, confirm: string): Promise<IUser>;
   login(username: string, password: string): Promise<IUser>;
 }
 
@@ -26,14 +26,19 @@ const userSchema = new Schema<IUser>({
 
 userSchema.statics.signup = async function (
   username: string,
-  password: string
+  password: string,
+  confirm: string
 ) {
-  if (!username || !password) {
+  if (!username || !password || !confirm) {
     throw Error("All fields can't be blank");
   }
   const exist = await this.findOne({ username });
   if (exist) {
     throw Error("The username is already in use");
+  }
+
+  if (confirm !== password) {
+    throw Error("Passwords do not match");
   }
 
   const salt = await genSalt(10);
@@ -46,7 +51,7 @@ userSchema.statics.login = async function (username: string, password: string) {
   if (!username || !password) {
     throw Error("All fields can't be blank");
   }
-  const user = this.findOne({ username });
+  const user = await this.findOne({ username });
   if (!user) {
     throw Error("Incorrect username or password");
   }

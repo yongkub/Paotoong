@@ -11,10 +11,10 @@ const createToken = (_id: Types.ObjectId) => {
 };
 
 //sign up
-export const createUser = async (req: Request, res: Response) => {
-  const { username, password } = req.body;
+export const signupUser = async (req: Request, res: Response) => {
+  const { username, password, confirm } = req.body;
   try {
-    const user = await User.signup(username, password);
+    const user = await User.signup(username, password, confirm);
     const token = createToken(user._id);
     res.status(200).json({ username, token });
   } catch (err: unknown) {
