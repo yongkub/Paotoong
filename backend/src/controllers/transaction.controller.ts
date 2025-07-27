@@ -1,13 +1,16 @@
 import { Request, Response } from "express";
 import errorHandler from "../utils/errorHandler.utils";
 import Transaction, { ITransaction } from "../models/transaction.model";
+import { AuthRequest } from "../middleware/requireAuth.middleware";
 
 //get txns by month
-export const getTxnsByMonth = async (req: Request, res: Response) => {
+export const getTxnsByMonth = async (req: AuthRequest, res: Response) => {
   try {
+    const userId = req.user;
     const month = parseInt(req.query.month as string);
     const year = parseInt(req.query.year as string);
     const txns = Transaction.find({
+      userId,
       $expr: {
         $and: [
           { $eq: [{ $month: "$date" }, month] },

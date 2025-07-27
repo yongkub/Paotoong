@@ -6,8 +6,8 @@ import { Types } from "mongoose";
 interface TokenPayload extends JwtPayload {
   _id: string;
 }
-interface AuthRequest extends Request {
-  user: Record<string, Types.ObjectId> | null;
+export interface AuthRequest extends Request {
+  user: Types.ObjectId | null;
 }
 
 const requireAuth = async (req: Request, res: Response, next: NextFunction) => {
@@ -23,6 +23,7 @@ const requireAuth = async (req: Request, res: Response, next: NextFunction) => {
     ) as TokenPayload;
     const authReq = req as AuthRequest; // authReq and req are the same object
     authReq.user = await User.findById(_id).select("_id");
+    next();
   } catch (err) {
     console.log(err);
     res.status(401).json({ error: "Request is not authorized" });
