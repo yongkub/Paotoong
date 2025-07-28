@@ -30,9 +30,6 @@
 .txn-modal .wrap{
     margin: 10px 0;
 }   
-.txn-modal input{
-    width: calc(100% - 60px)
-}
 .txncard{
     padding: 20px 30px;
 }

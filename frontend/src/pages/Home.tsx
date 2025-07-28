@@ -3,58 +3,49 @@ import TxnCard from "../components/TxnCard";
 import "../css/Home.css";
 import TxnModal from "../components/TxnModal";
 import { Tooltip } from "antd";
-import useAuthContext from "../hooks/useAuthContext";
-import useLogout from "../hooks/useLogout";
+import useFetchTxn, { type TxnProps } from "../hooks/useFetchTxn";
+import MonthPicker from "../components/MonthPicker";
+import ExpensesIcon from "../assets/icons/expenses.svg";
+import IncomeIcon from "../assets/icons/income.svg";
+import CashFlowIcon from "../assets/icons/cashflow.svg";
+import useMapTxn, { type IMonthDayTxn } from "../hooks/useMapTxn";
 
-export interface TxnProps {
-  _id?: string;
-  category: string;
-  note?: string;
-  amount: number;
-  label?: string;
-  date: Date;
-  isExpense: boolean;
-}
 const Home = () => {
-  const { user } = useAuthContext();
-  const { logout } = useLogout();
   const [showTxnModal, setShowTxnModal] = useState(false);
-  const [txns, setTxns] = useState([]);
+  const [txns, setTxns] = useState<TxnProps[]>([]);
+  const [expenses, setExpenses] = useState(0);
+  const [income, setIncome] = useState(0);
   const [filtDate, setFiltDate] = useState(new Date());
-  const fetchTxns = async () => {
-    if (!user) {
-      logout();
-      return;
-    }
-    const response = await fetch(
-      `/api/transaction?month=${
-        filtDate.getMonth() + 1
-      }&year=${filtDate.getFullYear()}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
-        },
-      }
+  const { fetchTxns } = useFetchTxn();
+  const { mapTxnsByDate } = useMapTxn();
+
+  const fetchAndUpdateTxns = async () => {
+    const fetchedTxns = await fetchTxns(
+      filtDate.getMonth() + 1,
+      filtDate.getFullYear()
     );
-
-    if (response.status === 401) {
-      logout();
+    if (!fetchTxns) {
+      setTxns([]);
       return;
     }
+    setTxns(fetchedTxns as TxnProps[]);
+    const totExpenses = fetchedTxns
+      ?.filter((txn: TxnProps) => txn.isExpense)
+      .map((txn: TxnProps) => txn.amount)
+      .reduce((total: number, expense: number) => total + expense, 0);
 
-    if (!response.ok) {
-      return;
-    }
+    const totIncome = fetchedTxns
+      ?.filter((txn: TxnProps) => !txn.isExpense)
+      .map((txn: TxnProps) => txn.amount)
+      .reduce((total: number, income: number) => total + income, 0);
 
-    const json = await response.json();
-    setTxns(json);
+    setExpenses(totExpenses ?? 0);
+    setIncome(totIncome ?? 0);
   };
 
   useEffect(() => {
-    fetchTxns();
-  }, []);
+    fetchAndUpdateTxns();
+  }, [filtDate]);
 
   const iniTxn: TxnProps = {
     category: "Food & Drink",
@@ -68,36 +59,85 @@ const Home = () => {
   const hideTxnModal = () => {
     setShowTxnModal(false);
   };
+
+  const handleAddNewTxn = () => {
+    setGlobalTxn(iniTxn);
+    setShowTxnModal(true);
+  };
+
+  const mappedTxns = mapTxnsByDate(txns);
+
   return (
     <div className="container-fluid">
       <Tooltip placement="left" title={<span>Add New Transaction</span>}>
         <div
           className="position-fixed bottom-0 text-black rounded-circle bg-white translate-middle end-0"
           id="add-txn"
-          onClick={() => setShowTxnModal(true)}
+          onClick={handleAddNewTxn}
         >
           <i className="bi bi-plus"></i>
         </div>
       </Tooltip>
       <div className="row justify-content-center gap-3">
-        <button className="btn rounded-pill btn-danger w-max-con">
-          Spending Summary
-        </button>
+        <div className="w-100 d-flex gap-2 align-items-center">
+          <i className="bi bi-filter"></i>
+          <MonthPicker
+            value={filtDate}
+            onChange={(dateStr) => setFiltDate(new Date(dateStr))}
+          />
+          <div className="row flex-grow-1 px-3">
+            <div className="text-danger col-12 col-md-4 col-lg-3 d-flex align-items-center">
+              <img src={ExpensesIcon} style={{ width: "16px" }} />
+              <span className="ms-1">Expenses: </span>
+              <span className="ms-2">-{expenses} THB</span>
+            </div>
+            <div className="text-success col-12 col-md-4 col-lg-3 d-flex align-items-center">
+              <img src={IncomeIcon} style={{ width: "16px" }} />
+              <span className="ms-1">Income: </span>
+              <span className="ms-2">+{income} THB</span>
+            </div>
+            <div className="col-12 col-md-4 col-lg-3 d-flex align-items-center">
+              <img src={CashFlowIcon} style={{ width: "16px" }} />
+              <span className="ms-1">Cash Flow: </span>
+              <span
+                className={
+                  "ms-2 " +
+                  (income > expenses
+                    ? "text-success"
+                    : income < expenses
+                    ? "text-danger"
+                    : "")
+                }
+              >
+                {income - expenses} THB
+              </span>
+            </div>
+          </div>
+        </div>
         {txns.length > 0 &&
-          txns.map((txn: TxnProps, ind) => {
+          mappedTxns.map((mapped: IMonthDayTxn, mdInd) => {
             return (
-              <TxnCard
-                key={ind}
-                amount={txn.amount}
-                category={txn.category}
-                label={txn.label ?? ""}
-                note={txn.note ?? ""}
-                isExpense={txn.isExpense}
-                date={txn.date}
-                _id={txn._id}
-                setGlobalTxn={setGlobalTxn}
-                setShowTxnModal={setShowTxnModal}
-              />
+              <div key={mdInd} className="my-3">
+                <div className="px-2 py-1 bg-field">{mapped.monthDay}</div>
+                <div>
+                  {mapped.txnsByDate.map((txn: TxnProps, txnInd) => {
+                    return (
+                      <TxnCard
+                        key={txnInd}
+                        amount={txn.amount}
+                        category={txn.category}
+                        label={txn.label ?? ""}
+                        note={txn.note ?? ""}
+                        isExpense={txn.isExpense}
+                        date={txn.date}
+                        _id={txn._id}
+                        setGlobalTxn={setGlobalTxn}
+                        setShowTxnModal={setShowTxnModal}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
             );
           })}
         {txns.length == 0 && (

@@ -1,8 +1,9 @@
-import { useState } from "react";
-import type { TxnProps } from "../pages/Home";
+import { useEffect, useState } from "react";
+import type { TxnProps } from "../hooks/useFetchTxn";
 import Category from "./Category";
 import useAddTxn from "../hooks/useAddTxn";
 import "../css/Txn.css";
+import DatePicker from "./DatePicker";
 
 const TxnModal = ({
   globalTxn,
@@ -11,7 +12,11 @@ const TxnModal = ({
   globalTxn: TxnProps;
   hideModal: () => void;
 }) => {
-  const [editingTxn, setEditingTxn] = useState(globalTxn);
+  const [editingTxn, setEditingTxn] = useState<TxnProps>(globalTxn);
+
+  useEffect(() => {
+    setEditingTxn(globalTxn);
+  }, [globalTxn]);
 
   const { addNewTxn } = useAddTxn();
 
@@ -45,13 +50,10 @@ const TxnModal = ({
         />
         <div className="wrap">
           <i className="bi bi-calendar-minus-fill"></i>
-          <input
-            type="date"
-            value={
-              editingTxn.date?.toISOString().split("T")[0] ||
-              new Date().toISOString().split("T")[0]
-            }
-            onChange={(e) => handlePropsChange("date", e.target.value)}
+          <DatePicker
+            value={editingTxn.date}
+            additionalClass="date-picker-in-modal"
+            onChange={(val: Date) => handlePropsChange("date", val)}
           />
         </div>
         <div className="wrap">
@@ -88,7 +90,7 @@ const TxnModal = ({
             onClick={editingTxn._id ? handleSaveChanges : handleAddTxn}
             className="btn btn-success act-btn"
           >
-            {editingTxn._id ? "Add Transaction" : "Save Changes"}
+            {editingTxn._id ? "Save Changes" : "Add Transaction"}
           </button>
           <button onClick={hideModal} className="btn btn-danger ms-2 act-btn">
             Cancel

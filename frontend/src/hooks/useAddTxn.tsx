@@ -1,4 +1,4 @@
-import { type TxnProps } from "../pages/Home";
+import type { TxnProps } from "./useFetchTxn";
 import useAuthContext from "./useAuthContext";
 import useLogout from "./useLogout";
 

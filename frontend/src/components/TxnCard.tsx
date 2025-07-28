@@ -1,6 +1,6 @@
 import type { Dispatch, SetStateAction } from "react";
 import "../css/Txn.css";
-import { type TxnProps } from "../pages/Home";
+import type { TxnProps } from "../hooks/useFetchTxn";
 
 export interface TxnCardProps extends TxnProps {
   setShowTxnModal: Dispatch<SetStateAction<boolean>>;

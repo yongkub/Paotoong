@@ -3,3 +3,12 @@ html, body, #root {
     margin: 0;
     background-color: black;
 }
+.w-max-con{
+    width: max-content !important;
+}
+.txn-modal input, .date-picker-in-modal{
+    width: calc(100% - 60px) !important;
+}
+.bg-field{
+    background-color: field !important;
+}
