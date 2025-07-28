@@ -9,6 +9,7 @@ import ExpensesIcon from "../assets/icons/expenses.svg";
 import IncomeIcon from "../assets/icons/income.svg";
 import CashFlowIcon from "../assets/icons/cashflow.svg";
 import useMapTxn, { type IMonthDayTxn } from "../hooks/useMapTxn";
+import useRefetchContext from "../hooks/useRefetchContext";
 
 const Home = () => {
   const [showTxnModal, setShowTxnModal] = useState(false);
@@ -18,13 +19,14 @@ const Home = () => {
   const [filtDate, setFiltDate] = useState(new Date());
   const { fetchTxns } = useFetchTxn();
   const { mapTxnsByDate } = useMapTxn();
+  const { refetchFlag } = useRefetchContext();
 
   const fetchAndUpdateTxns = async () => {
     const fetchedTxns = await fetchTxns(
       filtDate.getMonth() + 1,
       filtDate.getFullYear()
     );
-    if (!fetchTxns) {
+    if (!fetchedTxns) {
       setTxns([]);
       return;
     }
@@ -45,7 +47,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchAndUpdateTxns();
-  }, [filtDate]);
+  }, [filtDate, refetchFlag]);
 
   const iniTxn: TxnProps = {
     category: "Food & Drink",
@@ -89,12 +91,12 @@ const Home = () => {
             <div className="text-danger col-12 col-md-4 col-lg-3 d-flex align-items-center">
               <img src={ExpensesIcon} style={{ width: "16px" }} />
               <span className="ms-1">Expenses: </span>
-              <span className="ms-2">-{expenses} THB</span>
+              <span className="ms-2">-{expenses.toLocaleString()} THB</span>
             </div>
             <div className="text-success col-12 col-md-4 col-lg-3 d-flex align-items-center">
               <img src={IncomeIcon} style={{ width: "16px" }} />
               <span className="ms-1">Income: </span>
-              <span className="ms-2">+{income} THB</span>
+              <span className="ms-2">+{income.toLocaleString()} THB</span>
             </div>
             <div className="col-12 col-md-4 col-lg-3 d-flex align-items-center">
               <img src={CashFlowIcon} style={{ width: "16px" }} />
@@ -109,7 +111,7 @@ const Home = () => {
                     : "")
                 }
               >
-                {income - expenses} THB
+                {(income - expenses).toLocaleString()} THB
               </span>
             </div>
           </div>
@@ -141,7 +143,7 @@ const Home = () => {
             );
           })}
         {txns.length == 0 && (
-          <div className="text-center">No transaction yet</div>
+          <div className="text-center">No transactions yet</div>
         )}
       </div>
       {showTxnModal && (
