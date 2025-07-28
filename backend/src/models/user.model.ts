@@ -1,5 +1,6 @@
 import { Schema, model, Model, Types } from "mongoose";
 import { genSalt, hash, compare } from "bcrypt";
+import { isStrongPassword } from "validator";
 
 export interface IUser {
   _id: Types.ObjectId;
@@ -39,6 +40,10 @@ userSchema.statics.signup = async function (
 
   if (confirm !== password) {
     throw Error("Passwords do not match");
+  }
+
+  if (!isStrongPassword(password)) {
+    throw Error("Password not strong enough");
   }
 
   const salt = await genSalt(10);
