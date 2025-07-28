@@ -65,6 +65,7 @@
     flex-direction: column;
     gap: 10px;
     max-height: 50vh;
+    min-height: 200px;
     overflow-y: auto;
     z-index: 10;
     border: 1px solid gray;

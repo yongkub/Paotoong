@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import useFetchCat, { type IMappedCat } from "../hooks/useFetchCat";
+import EmptyIcon from "../assets/icons/empty.svg";
 import "../css/Txn.css";
 
 export interface ICategory {
@@ -82,6 +83,7 @@ const Category = ({
             </button>
           </div>
           {filtCats &&
+            filtCats.length > 0 &&
             filtCats.map((cat: ICategory, ind) => {
               const catIconPath = cat.name.split("&")[0].trim().toLowerCase();
               return (
@@ -95,6 +97,14 @@ const Category = ({
                 </div>
               );
             })}
+          {(!filtCats || filtCats.length == 0) && (
+            <div className="text-center mt-4">
+              <div>
+                <img src={EmptyIcon} />
+              </div>
+              <div>Empty</div>
+            </div>
+          )}
         </div>
       )}
     </div>
