@@ -1,5 +1,6 @@
 import useLogout from "./useLogout";
 import useAuthContext from "./useAuthContext";
+import useAlertContext from "./useAlertContext";
 interface RawTxnProps {
   _id?: string;
   category: string;
@@ -21,6 +22,7 @@ export interface TxnProps {
 const useFetchTxn = () => {
   const { user } = useAuthContext();
   const { logout } = useLogout();
+  const { triggerAlert } = useAlertContext();
   const fetchTxns = async (month: number, year: number) => {
     if (!user) {
       logout();
@@ -43,6 +45,7 @@ const useFetchTxn = () => {
     }
 
     if (!response.ok) {
+      triggerAlert("");
       return;
     }
 

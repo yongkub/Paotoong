@@ -96,8 +96,36 @@ export const createTxn = async (req: Request, res: Response) => {
 
 //update txn
 export const updateTxn = async (req: Request, res: Response) => {
-  const txn: ITransaction = req.body();
   try {
+    const _id = req.params.id;
+    const updatedTxnBody: ITxnReqBody = req.body;
+    const { category: categoryName, ...incompletedTxn } = updatedTxnBody;
+    const categoryDoc = await Category.findOne({ name: categoryName }).select(
+      "_id"
+    );
+    if (!categoryDoc) {
+      throw Error(`Can't find the category: ${categoryName}`);
+    }
+    const updatedTxn = { ...incompletedTxn, categoryId: categoryDoc._id }; //lack of userId, but it should be constant since only the user can edit their own txn
+    const updated = await Transaction.findByIdAndUpdate(_id, updatedTxn, {
+      new: true,
+      overwrite: true,
+      runValidators: true,
+    });
+    res.status(200).json(updated);
+    console.log("Updated successfully", updated);
+  } catch (err: unknown) {
+    errorHandler(err, res);
+  }
+};
+
+//delete
+export const deleteTxn = async (req: Request, res: Response) => {
+  const _id = req.params.id;
+  try {
+    const deleted = await Transaction.findByIdAndDelete(_id);
+    res.status(200).json(true);
+    console.log("Deleted successfully", deleted);
   } catch (err: unknown) {
     errorHandler(err, res);
   }

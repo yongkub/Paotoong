@@ -1,31 +1,29 @@
-import type { TxnProps } from "./useFetchTxn";
+import useAlertContext from "./useAlertContext";
 import useAuthContext from "./useAuthContext";
 import useLogout from "./useLogout";
 import useRefetchContext from "./useRefetchContext";
-import useAlertContext from "./useAlertContext";
 
-const useAddTxn = () => {
+const useDeleteTxn = () => {
   const { user } = useAuthContext();
   const { logout } = useLogout();
   const { triggerRefetch } = useRefetchContext();
   const { triggerAlert } = useAlertContext();
-  const addNewTxn = async (newTxn: TxnProps) => {
+  const deleteTxn = async (_id: string): Promise<boolean> => {
     if (!user) {
       logout();
-      return;
+      return false;
     }
-    const response = await fetch("/api/transaction", {
-      method: "POST",
+    const response = await fetch(`/api/transaction/${_id}`, {
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${user.token}`,
       },
-      body: JSON.stringify(newTxn),
     });
 
     if (response.status === 401) {
       logout();
-      return;
+      return false;
     }
 
     if (!response.ok) {
@@ -35,13 +33,15 @@ const useAddTxn = () => {
       } catch {
         triggerAlert("");
       }
-      return;
+      return false;
     }
-    await response.json();
+
+    const success: boolean = await response.json();
     triggerRefetch();
+    return success;
   };
 
-  return { addNewTxn };
+  return { deleteTxn };
 };
 
-export default useAddTxn;
+export default useDeleteTxn;

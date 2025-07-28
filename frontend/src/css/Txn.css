@@ -1,4 +1,4 @@
-.sm-txt, #x{
+.sm-txt{
     font-size: 12px !important;
 }
 .label{
@@ -21,7 +21,8 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 50%;
+    width: 70%;
+    min-width: 400px;
 }
 .txn-modal i{
     font-size: 15px;
@@ -42,6 +43,16 @@
 .txncard:hover{
     background-color: #161719;
 }
+.cat-btn{
+    border-radius: 16px;
+    background-color: black;
+    border: none;
+    padding: 10px 20px;
+    width: max(50%, 100px);
+}
+.cat-btn.chosen{
+    background-color: #282828 !important;
+}
 .cat-select{
     position: absolute;
     left: 0;
@@ -56,11 +67,12 @@
     max-height: 50vh;
     overflow-y: auto;
     z-index: 10;
+    border: 1px solid gray;
+    font-size: 12px;
 }
 .cat-item{
     padding: 2px 5px;
     border-radius: 8px;
-    font-size: 12px;
 }
 .cat-item:hover{
     background-color: rgb(67, 67, 67);

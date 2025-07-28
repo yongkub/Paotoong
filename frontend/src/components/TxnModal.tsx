@@ -4,6 +4,7 @@ import Category from "./Category";
 import useAddTxn from "../hooks/useAddTxn";
 import "../css/Txn.css";
 import DatePicker from "./DatePicker";
+import useUpdateTxn from "../hooks/useUpdateTxn";
 
 const TxnModal = ({
   globalTxn,
@@ -19,13 +20,10 @@ const TxnModal = ({
   }, [globalTxn]);
 
   const { addNewTxn } = useAddTxn();
+  const { updateTxn } = useUpdateTxn();
 
   const handlePropsChange = (field: keyof TxnProps, newValue: any) => {
     setEditingTxn((prev) => ({ ...prev, [field]: newValue }));
-  };
-
-  const handleSaveChanges = () => {
-    hideModal();
   };
 
   const setEditingCat = (newCatName: string, newCatIsExpense: boolean) => {
@@ -41,11 +39,17 @@ const TxnModal = ({
     hideModal();
   };
 
+  const handleSaveChanges = async () => {
+    await updateTxn(editingTxn);
+    hideModal();
+  };
+
   return (
     <div className="txn-bd">
       <div className="px-3 py-2 rounded-4 txn-modal">
         <Category
           category={editingTxn.category}
+          isCatExpense={editingTxn.isExpense}
           setEditingCat={setEditingCat}
         />
         <div className="wrap">

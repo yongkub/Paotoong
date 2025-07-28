@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
+import useFetchCat, { type IMappedCat } from "../hooks/useFetchCat";
 import "../css/Txn.css";
-import useAuthContext from "../hooks/useAuthContext";
-import useLogout from "../hooks/useLogout";
 
 export interface ICategory {
   _id: string;
@@ -11,39 +10,24 @@ export interface ICategory {
 }
 const Category = ({
   category,
+  isCatExpense,
   setEditingCat,
 }: {
   category: string;
+  isCatExpense: boolean;
   setEditingCat: (newCatName: string, newCatIsExpense: boolean) => void;
 }) => {
-  const { user } = useAuthContext();
-  const { logout } = useLogout();
   const [showSelect, setShowSelect] = useState(false);
   const [cat, setCat] = useState(category);
-  const [cats, setCats] = useState([]);
+  const [cats, setCats] = useState<IMappedCat[]>([]);
+  const [isExpense, setIsExpense] = useState(true);
   const icon = cat.split("&")[0].trim().toLowerCase();
-  const fetchCats = async () => {
-    if (!user) {
-      logout();
-      return;
-    }
-    const response = await fetch("/api/category", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
-      },
-    });
 
-    if (response.status === 401) {
-      logout();
-      return;
-    }
-    if (!response.ok) {
-      return;
-    }
-    const json = await response.json();
-    setCats(json);
+  const { getMappedCats } = useFetchCat();
+
+  const fetchCats = async () => {
+    const cats: IMappedCat[] = await getMappedCats();
+    setCats(cats);
   };
 
   useEffect(() => {
@@ -52,12 +36,22 @@ const Category = ({
 
   useEffect(() => {
     setCat(category);
-  }, [category]);
+    setIsExpense(isCatExpense);
+  }, [category, isCatExpense]);
+
+  const filtCats = cats.find(
+    (mapped) => mapped.isExpense === isExpense
+  )?.filtCats;
 
   const handleClickCat = (e: any, catName: string, isExpense: boolean) => {
     e.stopPropagation();
     setEditingCat(catName, isExpense);
     setShowSelect(false);
+  };
+
+  const handleChangeType = (e: any, typeFlag: boolean) => {
+    e.stopPropagation();
+    setIsExpense(typeFlag);
   };
   return (
     <div
@@ -65,7 +59,7 @@ const Category = ({
       onClick={() => setShowSelect((prev) => !prev)}
     >
       <img src={`src/assets/category/${icon}.svg`} className="cat-icon" />
-      <span id="x">{cat}</span>
+      <span className="sm-txt">{cat}</span>
       {showSelect ? (
         <i className="bi bi-caret-up-fill ms-auto"></i>
       ) : (
@@ -73,19 +67,34 @@ const Category = ({
       )}
       {showSelect && (
         <div className="cat-select">
-          {cats.map((cat: ICategory, ind) => {
-            const catIconPath = cat.name.split("&")[0].trim().toLowerCase();
-            return (
-              <div
-                onClick={(e) => handleClickCat(e, cat.name, cat.isExpense)}
-                key={ind}
-                className="cat-item"
-              >
-                <img src={`src/assets/category/${catIconPath}.svg`} />
-                <span>{cat.name}</span>
-              </div>
-            );
-          })}
+          <div className="d-flex justify-content-center gap-3">
+            <button
+              className={isExpense ? "cat-btn chosen" : "cat-btn"}
+              onClick={(e) => handleChangeType(e, true)}
+            >
+              Expenses
+            </button>
+            <button
+              className={!isExpense ? "cat-btn chosen" : "cat-btn"}
+              onClick={(e) => handleChangeType(e, false)}
+            >
+              Income
+            </button>
+          </div>
+          {filtCats &&
+            filtCats.map((cat: ICategory, ind) => {
+              const catIconPath = cat.name.split("&")[0].trim().toLowerCase();
+              return (
+                <div
+                  onClick={(e) => handleClickCat(e, cat.name, cat.isExpense)}
+                  key={ind}
+                  className="cat-item"
+                >
+                  <img src={`src/assets/category/${catIconPath}.svg`} />
+                  <span>{cat.name}</span>
+                </div>
+              );
+            })}
         </div>
       )}
     </div>

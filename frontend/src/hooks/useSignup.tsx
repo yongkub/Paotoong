@@ -20,12 +20,18 @@ const useSignup = () => {
       body: JSON.stringify({ username, password, confirm }),
     });
 
-    const json = await response.json();
     if (!response.ok) {
-      setIsLoading(false);
-      setError(json.error);
+      try {
+        const jsonErr = await response.json();
+        setIsLoading(false);
+        setError(jsonErr.error);
+      } catch {
+        setIsLoading(false);
+        setError("Something went wrong :(");
+      }
       return false;
     }
+    const json = await response.json();
     setIsLoading(false);
     dispatch({ type: "LOGIN", payload: json });
     localStorage.setItem("user", JSON.stringify(json));

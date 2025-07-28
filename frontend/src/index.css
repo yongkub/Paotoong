@@ -12,3 +12,6 @@ html, body, #root {
 .bg-field{
     background-color: field !important;
 }
+.cursor-pointer{
+    cursor:  pointer !important;
+}
