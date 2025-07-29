@@ -56,7 +56,7 @@ const Login = () => {
             </div>
             <div className="col-12">
               <button className="btn btn-primary w-100" type="submit">
-                Login
+                Log in
               </button>
             </div>
             {error && (

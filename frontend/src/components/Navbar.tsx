@@ -20,7 +20,7 @@ const Navbar = () => {
         Welcome {user?.username ?? "UNKNOWN"} !
       </div>
       <button className="btn btn-primary" onClick={handleLogout}>
-        Logout
+        Log out
       </button>
     </div>
   );
