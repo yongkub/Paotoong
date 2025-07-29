@@ -1,7 +1,7 @@
 # Paotoong
 ## MERN stack  
 
-Run wirh **Docker**\
+Run with **Docker**\
 \
 `backend/.env`
 ```
