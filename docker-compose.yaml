@@ -1,0 +1,17 @@
+services:
+  backend:
+    build: ./backend
+    env_file:
+      - ./backend/.env
+    container_name: backend_c
+    ports:
+      - '3000:3000'
+  frontend:
+    build: ./frontend
+    env_file:
+      - ./frontend/.env
+    container_name: frontend_c
+    ports:
+      - '4173:4173'
+    stdin_open: true
+    tty: true
