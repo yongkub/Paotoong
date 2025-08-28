@@ -1,35 +1,53 @@
-import { useRef } from "react";
+import { useState } from "react";
 interface MonthPickerProps {
-  value: Date;
-  onChange: (dateStr: Date) => void;
+  onChange: (monthYear: MonthYear) => void;
 }
-const MonthPicker = ({ value, onChange }: MonthPickerProps) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const handleClick = () => {
-    inputRef.current?.showPicker?.();
+
+export type MonthYear = {
+  month: number;
+  year: number;
+};
+
+const MonthPicker = ({ onChange }: MonthPickerProps) => {
+  const [monthYear, setMonthYear] = useState<MonthYear>({
+    month: new Date().getMonth(),
+    year: new Date().getFullYear(),
+  });
+
+  const handleSelectMonth = (month: number) => {
+    const newMonthYear = { ...monthYear, month };
+    setMonthYear(newMonthYear);
+    onChange(newMonthYear);
   };
-  const formatMonthYear = (date: Date) => {
-    const month: number = date.getMonth() + 1;
-    const year: number = date.getFullYear();
-    //yyyy-MM
-    return (
-      year.toString().padStart(4, "0") + "-" + month.toString().padStart(2, "0")
-    );
-  };
+
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
   return (
-    <div onClick={handleClick} className="w-max-con">
-      <input
-        type="month"
-        ref={inputRef}
-        value={formatMonthYear(value)}
-        onChange={(e) => {
-          const myStr =
-            e.target.value === ""
-              ? formatMonthYear(new Date())
-              : e.target.value;
-          onChange(new Date(myStr));
-        }}
-      />
+    <div>
+      {months.map((m, ind) => {
+        return (
+          <div
+            key={ind}
+            onClick={() => handleSelectMonth(ind)}
+            className={ind === monthYear.month ? "selected" : ""}
+          >
+            {m}
+          </div>
+        );
+      })}
     </div>
   );
 };

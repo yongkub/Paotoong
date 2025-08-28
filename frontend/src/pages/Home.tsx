@@ -67,6 +67,11 @@ const Home = () => {
     setShowTxnModal(true);
   };
 
+  const handleSelectMonth = (newMonthYear: any) => {
+    const newDate = new Date(newMonthYear.year, newMonthYear.month);
+    setFiltDate(newDate);
+  };
+
   const mappedTxns = mapTxnsByDate(txns);
 
   return (
@@ -83,10 +88,7 @@ const Home = () => {
       <div className="row justify-content-center gap-3">
         <div className="w-100 d-flex gap-2 align-items-center">
           <i className="bi bi-filter"></i>
-          <MonthPicker
-            value={filtDate}
-            onChange={(dateStr) => setFiltDate(new Date(dateStr))}
-          />
+          <MonthPicker onChange={(value) => handleSelectMonth(value)} />
           <div className="row flex-grow-1 px-3">
             <div className="text-danger col-12 col-md-4 col-lg-3 d-flex align-items-center">
               <img src={ExpensesIcon} style={{ width: "16px" }} />
