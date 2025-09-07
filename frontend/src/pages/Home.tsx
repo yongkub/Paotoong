@@ -86,7 +86,7 @@ const Home = () => {
         </div>
       </Tooltip>
       <div className="row justify-content-center gap-3">
-        <div className="w-100 d-flex gap-2 align-items-center">
+        <div className="w-100 d-flex gap-2 align-items-start">
           <i className="bi bi-filter"></i>
           <MonthPicker onChange={(value) => handleSelectMonth(value)} />
           <div className="row flex-grow-1 px-3">

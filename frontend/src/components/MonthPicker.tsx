@@ -17,6 +17,14 @@ const MonthPicker = ({ onChange }: MonthPickerProps) => {
 
   const [showPicker, setShowPicker] = useState(false);
 
+  const closePicker = () => {
+    setShowPicker(false);
+  };
+
+  const openPicker = () => {
+    setShowPicker(true);
+  };
+
   const handleSelectMonth = (month: number) => {
     const newMonthYear = { ...monthYear, month };
     setMonthYear(newMonthYear);
@@ -49,28 +57,40 @@ const MonthPicker = ({ onChange }: MonthPickerProps) => {
 
   return (
     <div>
-      <div className="header">
-        <span onClick={() => handleSelectYear(false)}>
-          <i className="bi bi-arrow-left"></i>
-        </span>
-        <span>{monthYear.year}</span>
-        <span onClick={() => handleSelectYear(true)}>
-          <i className="bi bi-arrow-right"></i>
-        </span>
-      </div>
-      <div className="calendar-wrapper">
-        {months.map((m, ind) => {
-          return (
-            <div
-              key={ind}
-              onClick={() => handleSelectMonth(ind)}
-              className={ind === monthYear.month ? "selected" : ""}
-            >
-              {m}
-            </div>
-          );
-        })}
-      </div>
+      {showPicker && (
+        <>
+          <div className="header">
+            <span onClick={() => handleSelectYear(false)}>
+              <i className="bi bi-arrow-left"></i>
+            </span>
+            <span>{monthYear.year}</span>
+            <span onClick={() => handleSelectYear(true)}>
+              <i className="bi bi-arrow-right"></i>
+            </span>
+            <span className="ms-auto" onClick={closePicker}>
+              <i className="bi bi-x-circle-fill"></i>
+            </span>
+          </div>
+          <div className="calendar-wrapper">
+            {months.map((m, ind) => {
+              return (
+                <div
+                  key={ind}
+                  onClick={() => handleSelectMonth(ind)}
+                  className={ind === monthYear.month ? "selected" : ""}
+                >
+                  {m}
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
+      {!showPicker && (
+        <div className="open-picker" onClick={openPicker}>
+          Select Month
+        </div>
+      )}
     </div>
   );
 };
